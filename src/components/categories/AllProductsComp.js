@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Image, Pressable } from "react-native";
-import { deviceHeight, deviceWidth } from '../../utils/Dimensions'
+import { deviceWidth } from '../../utils/Dimensions'
 import { getImage } from '../../utils/ProductImage'
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
