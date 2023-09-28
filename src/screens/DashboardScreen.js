@@ -4,7 +4,7 @@ import { View, Text, TextInput, Image, ScrollView, Pressable, Animated, FlatList
 import { EvilIcons, MaterialIcons } from '@expo/vector-icons';
 
 // imported utils here... 
-import { deviceWidth, deviceHeight } from '../utils/Dimensions'
+import { deviceWidth } from '../utils/Dimensions'
 import { filterFunction } from "../utils/FilterFunction";
 import { categories } from "../utils/Products"
 import ItemWrapper from "../components/categories/wrapper/ItemWrapper";
