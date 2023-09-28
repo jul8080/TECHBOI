@@ -41,3 +41,5 @@ export default function App() {
   );
 }
 // json-server --host 0.0.0.0 ./data/db.json
+
+// git config --global core.autocrlf false
