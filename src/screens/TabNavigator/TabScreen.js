@@ -80,7 +80,7 @@ const TabScreen = () => {
                     }
                 }}
             />
-            <Tab.Screen name="Settings" component={SettingScreen}
+            {/* <Tab.Screen name="Settings" component={SettingScreen}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -91,7 +91,7 @@ const TabScreen = () => {
                         )
                     }
                 }}
-            />
+            /> */}
         </Tab.Navigator>
     )
 }
