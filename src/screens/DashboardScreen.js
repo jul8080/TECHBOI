@@ -8,7 +8,6 @@ import { deviceWidth, deviceHeight } from '../utils/Dimensions'
 import { filterFunction } from "../utils/FilterFunction";
 import { categories } from "../utils/Products"
 import ItemWrapper from "../components/categories/wrapper/ItemWrapper";
-import Header from "../components/dashboard/Header";
 
 const HEADER_MAX_HEIGHT = 50;
 const HEADER_MIN_HEIGHT = 0;
@@ -211,7 +210,6 @@ const DashboardScreen = () => {
             {/* products starts here... */}
             <View style={{ flex: 1, marginBottom: 45, backgroundColor: '#f1f1f1' }}>
                 <ScrollView
-                    stickyHeaderIndices={[0]}
 
                     horizontal={true}
                     pagingEnabled
