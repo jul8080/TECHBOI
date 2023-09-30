@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { StatusBar } from 'expo-status-bar';
 import { View, Text, Pressable, Image, StyleSheet, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { deviceWidth } from '../utils/Dimensions'
 import { Ionicons, AntDesign } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import { ScrollView } from "react-native-gesture-handler";
 import PaymentMethod from "../components/method/PaymentMethod";
 import PaymentConfirmation from "../components/method/modal/PaymentConfirmation";
