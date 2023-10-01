@@ -8,6 +8,7 @@ import SignInScreen from './src/authScreens/SignInScreen';
 import SignUpScreen from './src/authScreens/SignUpScreen';
 import TabScreen from './src/screens/TabNavigator/TabScreen';
 import SelectedItemsScreen from './src/screens/SelectedItemsScreen';
+import TransitScreen from './src/screens/TransitScreen';
 
 const Stack = createStackNavigator()
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="TabScreen" component={TabScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SelectedItems" component={SelectedItemsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Transit" component={TransitScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer >
     </>

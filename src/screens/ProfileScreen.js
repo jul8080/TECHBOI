@@ -1,18 +1,39 @@
-import React,{useState} from "react";
-import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, Animated } from "react-native";
 import { deviceWidth } from "../utils/Dimensions";
-import { Ionicons, AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from 'expo-status-bar';
 import NavLinks from "../components/profile/NavLinks";
+import HelpCenter from "../components/navbar/HelpCenter";
 const ProfileScreen = () => {
     const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
     const statusStyle = useState(StatusBarStyle[0])[0]
     const shopLogoBackground = useState(false)[0]
     const navigation = useNavigation()
+    const scrollRight = useState(new Animated.Value(1000))[0]
+    const nativeDriver = useState(true)[0]
+    const slideRight = () => {
+        Animated.timing(scrollRight, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: nativeDriver
+        }).start()
+    }
+    const slideRightHide = () => {
+        Animated.timing(scrollRight, {
+            toValue: 1000,
+            duration: 500,
+            useNativeDriver: nativeDriver
+        }).start()
+    }
+ 
     return (
         <View style={{ flex: 1, backgroundColor: '#f1f1f1' }}>
+            {/* modal starts here... */}
+            <HelpCenter scrollRight={scrollRight} nativeDriver={nativeDriver} slideRightHide={slideRightHide} />
+            {/* modal ends here... */}
             <SafeAreaView style={{ backgroundColor: '#f1f1f1', width: deviceWidth, height: 86, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
                 <Ionicons name="arrow-back-circle-outline" size={24} color="black" onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 30, bottom: 6 }} />
                 <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, marginBottom: 6, color: '#000' }}>My Profile</Text>
@@ -30,8 +51,9 @@ const ProfileScreen = () => {
                 <NavLinks header="Promocodes" description="Expired" />
                 <NavLinks header="My reviews" description="Make some reviews to your orders now" />
                 <NavLinks header="Settings" description="Notifications, password" />
-                <NavLinks header="Help Center" description="Shipping Options, Orders & Shipping" />
+                <NavLinks onPress={slideRight} header="Help Center" description="Shipping Options, Orders & Shipping" />
             </View>
+
             {/* tabBar starts here... */}
             <StatusBar style={statusStyle} backgroundColor="#f1f1f1" hidden={shopLogoBackground} />
         </View>
