@@ -6,6 +6,7 @@ import { EvilIcons, MaterialIcons } from '@expo/vector-icons';
 // imported utils here... 
 import { deviceWidth } from '../utils/Dimensions'
 import { filterFunction } from "../utils/FilterFunction";
+import { images } from "../utils/ImageBackground";
 import { categories } from "../utils/Products"
 import ItemWrapper from "../components/categories/wrapper/ItemWrapper";
 
@@ -19,13 +20,9 @@ const DashboardScreen = () => {
     const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
     const statusStyle = useState(StatusBarStyle[1])[0]
     const shopLogoBackground = useState(false)[0]
-    const [currentIndex, setCurrentIndex] = useState(0)
     const animation = useState(new Animated.Value(0))[0]
     const [products, setProducts] = useState([])
-    const [index, setIndex] = useState(0)
-    const [scrollIndex, setScrollIndex] = useState(0)
-    const [categoriesIndex, setCategoriesIndex] = useState(0)
-    const [status, setStatus] = useState(true)
+    const [ status, setStatus ] = useState(true)
     // categories here...
     const processors = filterFunction(products, 'processor');
     const motherboards = filterFunction(products, 'motherboard');
@@ -111,312 +108,30 @@ const DashboardScreen = () => {
             viewPosition: 1
         })
     }
+    const [ imageBackground, setImageBackground ] = useState(0)
+    useEffect(() => {
+        const changeImage = setInterval(() => {
+            setImageBackground((prevImage) => (prevImage + 1) % images.length)
+        }, 5000)
 
+        return () => clearInterval(changeImage)
+    }, [])
     return (
 
         <View style={{ flex: 1, backgroundColor: '#f1f1f1' }}>
             {/* header starts here... */}
-            <ImageBackground source={require('../../assets/images/header/bg01.png')} style={{ backgroundColor: '#222222', width: deviceWidth, borderBottomLeftRadius: 15, borderBottomRightRadius: 15, justifyContent: 'center', alignItems: 'center', resizeMode: 'cover' }}>
-                <View style={{ width: deviceWidth - 30, flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ marginTop: 57 }}>
-                        <Text style={{ color: '#D8D8D8', fontFamily: 'Poppins-Bold', fontSize: 22 }}>Wanna build your</Text>
-                        <Text style={{ color: '#D8D8D8', fontFamily: 'Poppins-Bold', fontSize: 22, marginTop: - 5 }}>own PC?</Text>
-                    </View>
-                    <Image source={require('../../assets/images/profile/profile.jpg')} style={{ width: 32, height: 32, resizeMode: 'cover', borderRadius: 100 / 2, position: 'absolute', right: 0, top: 50 }} />
-                </View>
-                <View style={{ flexDirection: 'row', width: deviceWidth - 30, height: 56, backgroundColor: '#fff', borderRadius: 10, alignItems: 'center', marginTop: 20, jusitifyContent: 'center' }}>
-                    <EvilIcons name="search" size={24} color="#BABABA" style={{ marginLeft: 15, marginRight: 8 }} />
-                    <TextInput placeholder="Search Items: " style={{ flexShrink: 1, width: '100%', height: '100%', fontFamily: 'Poppins-Regular', color: '#000', fontSize: 14 }} />
-                </View>
-                <View style={{ marginTop: 20, marginBottom: 12, flexDirection: 'row', height: 74, width: deviceWidth - 24 }}>
-                    <View style={{ justifyContent: 'center', width: 24 }}>
-                        <MaterialIcons name="arrow-back-ios" size={24} color="#7F7F7F"
-                            onPress={backwardArrow}
-                        />
-                    </View>
-                    {/* <ScrollView ref={scrollRef} horizontal scrollEventThrottle={16} 
-                        onScroll={e => {
-                            setCurrent((e.nativeEvent.contentOffset.x / deviceWidth).toFixed(0))
-                        }}
-                    >
-                        <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8 }}>
-                            {trendProducts.map((item, index) => (
-                                <View key={index} style={{ backgroundColor: '#d5d5d5', height: '100%', width: 90, borderRadius: 5 }}>
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', rowGap: -3, backgroundColor: '#fff', width: '100%', height: 31, position: 'absolute', bottom: 0, zIndex: 1, borderRadius: 5 }}>
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: '#425466' }}>{item.name}</Text>
-                                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 6, color: '#7F7F7F' }}>{item.desc}</Text>
-                                    </View>
-                                    <Image source={item.image} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 5 }} />
-                                </View>
-                            ))}
-                        </View>
-                    </ScrollView> */}
-                    <Animated.FlatList
-                        ref={scrollRef}
-                        horizontal
-                        keyExtractor={item => item.id.toString()}
-                        initialScrollIndex={scrollIndex}
-                        data={trendProducts}
-                        renderItem={({ item }) => (
-                            <View style={{ backgroundColor: '#d5d5d5', height: '100%', width: 90, borderRadius: 5, marginRight: 8 }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center', rowGap: -3, backgroundColor: '#fff', width: '100%', height: 31, position: 'absolute', bottom: 0, zIndex: 1, borderRadius: 5 }}>
-                                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: '#425466' }}>{item.name}</Text>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 6, color: '#7F7F7F' }}>{item.desc}</Text>
-                                </View>
-                                <Image source={item.image} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 5 }} />
-                            </View>
-                        )}
-                    />
-
-
-                    <View style={{ width: 28, alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <MaterialIcons name="arrow-forward-ios" size={24} color="#7F7F7F"
-                            onPress={forwardArrow}
-                        />
-                    </View>
-                </View>
-            </ImageBackground>
+            <View style={{ }}>
+                <ImageBackground 
+                    imageStyle={{ borderBottomLeftRadius: 15, borderBottomRightRadius: 15,}} 
+                    source={images[imageBackground].source} 
+                    style={{ height: 304, width: deviceWidth, resizeMode: 'cover' }}
+                >
+                    
+                </ImageBackground>
+            </View>
             {/* header ends here... */}
             
-            {/* filter button categories starts here... */}
-            <View style={{ flexDirection: 'row', width: deviceWidth, backgroundColor: '#f1f1f1', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                <ScrollView
-                    horizontal
-    
-                    scrollEventThrottle={16}
-                >
-                    {categories.map((category, index) => (
-                        <View key={category.id} style={{ paddingHorizontal: 14, alignItems: 'center', justifyContent: 'center' }}>
-                            <Pressable onPress={() => alert(123)}>
-                                <Text style={{ fontFamily: currentIndex == index ? 'Poppins-Medium' : 'Poppins-Regular', fontSize: currentIndex == index ? 14 : 13, color: currentIndex == index ? '#000' : '#7F7F7F' }}>{category.name}</Text>
-                            </Pressable>
-                        </View>
-                    ))}
-                </ScrollView>
-                {/* <Animated.FlatList
-                    data={categories}   
-                    horizontal
-                    initialScrollIndex={categoriesIndex}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({item, index}) => (
-                        <Pressable style={{ marginHorizontal: 15 }}>
-                            <Text style={{ fontFamily: currentIndex == index ? 'Poppins-Medium' : 'Poppins-Regular', fontSize: currentIndex == index ? 14 : 13, color: currentIndex == index ? '#000' : '#7F7F7F' }}>{item.name}</Text>
-                        </Pressable>
-                    )}
-                /> */}
-            </View>
-            {/* filter button categories ends here... */}
-
-            {/* products starts here... */}
-            <View style={{ flex: 1, marginBottom: 45, backgroundColor: '#f1f1f1' }}>
-                <ScrollView
-
-                    horizontal={true}
-                    pagingEnabled
-                    snapToAlignment="center"
-                    showsVerticalScrollIndicator={false}
-                    scrollEventThrottle={16}
-                    onScroll={scrollX => {
-                        setCurrentIndex((scrollX.nativeEvent.contentOffset.x / deviceWidth).toFixed(0))
-                    }}
-                >
-
-                    {/* All product starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={50} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={products} animation={animation} />
-
-                        )}
-                    {/* All product ends here... */}
-
-                    {/* Processor starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={processors} animation={animation} />
-
-                        )}
-                    {/* Processor ends here... */}
-
-                    {/* Motherboard starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={motherboards} animation={animation} />
-
-                        )}
-                    {/* Motherboard ends here... */}
-
-                    {/* Graphics Card starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={graphicCards} animation={animation} />
-
-                        )}
-                    {/* Motherboard ends here... */}
-
-                    {/* Laptops starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={laptops} animation={animation} />
-
-                        )}
-                    {/* Laptops ends here... */}
-
-                    {/* Monitors starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={monitors} animation={animation} />
-
-                        )}
-                    {/* Monitors ends here... */}
-
-                    {/* CPU Fans / AIO Cooler starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={coolers} animation={animation} />
-
-                        )}
-                    {/* CPU Fans / AIO Cooler ends here... */}
-
-                    {/* Storage Devices starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={storageDevices} animation={animation} />
-                        )}
-                    {/* Storage Devices ends here... */}
-
-                    {/* Memory Modules starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={processors} animation={animation} />
-
-                        )}
-                    {/* Memory Modules ends here... */}
-
-                    {/* Power Supplies starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={powerSupplies} animation={animation} />
-
-                        )}
-                    {/* Power Supplies ends here... */}
-
-                    {/* Cases starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={cases} animation={animation} />
-
-                        )}
-                    {/* Cases ends here... */}
-
-                    {/* Pc Set Package starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={fullSets} animation={animation} />
-
-                        )}
-                    {/* Pc Set Package ends here... */}
-
-                    {/* Headphones starts here... */}
-                    {status ?
-                        (
-
-                            <View style={{ backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, gap: 15, justifyContent: 'center', alignItems: 'center', paddingLeft: 14 }}>
-                                <ActivityIndicator size={30} />
-                            </View>
-
-                        ) :
-                        (
-                            <ItemWrapper category={headphones} animation={animation} />
-
-                        )}
-                    {/* Headphones ends here... */}
-
-                </ScrollView>
-            </View>
+          
             {/* products ends here... */}
             <StatusBar style={statusStyle} backgroundColor="#222222" hidden={shopLogoBackground} />
         </View >

@@ -27,7 +27,7 @@ const OrderScreen = () => {
     const scrollToIndex = (index) => {
         scrollX.current.scrollToIndex({
             index,
-            animatiom: true
+            animated: true,
         })
     }
 
