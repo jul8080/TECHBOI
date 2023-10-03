@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, TextInput, Image, ScrollView, Pressable, Animated, FlatList, ImageBackground, ActivityIndicator, TouchableOpacity } from "react-native";
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { View, Text, TextInput, Image, FlatList, ImageBackground, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Feather } from '@expo/vector-icons';
 
 // imported utils here... 
 import { deviceWidth } from '../utils/Dimensions'
 import { filterFunction } from "../utils/FilterFunction";
 import { images } from "../utils/ImageBackground";
 import { categories } from "../utils/Products"
-import ItemWrapper from "../components/categories/wrapper/ItemWrapper";
 import AllProducts from "../components/categories/AllProducts";
 
 const HEADER_MAX_HEIGHT = 50;
@@ -16,12 +15,9 @@ const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const DashboardScreen = () => {
-    const scrollRef = useRef(null)
-    const [current, setCurrent] = useState(0)
     const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
     const statusStyle = useState(StatusBarStyle[1])[0]
     const shopLogoBackground = useState(false)[0]
-    const animation = useState(new Animated.Value(0))[0]
     const [products, setProducts] = useState([])
     const [status, setStatus] = useState(true)
     // categories here...
@@ -71,22 +67,6 @@ const DashboardScreen = () => {
     ]
 
 
-
-    const headerTranslateY = animation.interpolate({
-        inputRange: [0, 200],
-        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-        extrapolate: 'clamp'
-    })
-    const headerOpacity = animation.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [1, 0],
-        extrapolate: 'clamp'
-    })
-    const headerScrollY = animation.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [0, -10],
-        extrapolate: 'clamp'
-    })
     const [imageBackground, setImageBackground] = useState(0)
     useEffect(() => {
         const changeImage = setInterval(() => {
@@ -196,7 +176,6 @@ const DashboardScreen = () => {
                                         <View style={{ width: deviceWidth, backgroundColor: 'green' }}>
                                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: '#7F7F7F' }}>{item.name}</Text>
                                         </View>
-
                                     </View>
                                 )
                                 break;
