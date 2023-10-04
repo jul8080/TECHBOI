@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, TextInput, Image, FlatList, ImageBackground, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Image, FlatList, ImageBackground, TouchableOpacity } from "react-native";
 import { Feather } from '@expo/vector-icons';
 
 // imported utils here... 
@@ -152,7 +152,7 @@ const DashboardScreen = () => {
             {/* navbar ends here... */}
 
             {/* navbar items starts here... */}
-            <View style={{ flex: 1, backgroundColor: 'coral' }}>
+            <View style={{ flex: 1, backgroundColor: 'transparent' }}>
                 <FlatList
                     onScroll={e => {
                         const x = e.nativeEvent.contentOffset.x
@@ -165,19 +165,46 @@ const DashboardScreen = () => {
                     horizontal
                     data={categories}
                     keyExtractor={item => item.id.toString()}
-                    renderItem={({ item, index }) => {
+                    renderItem={({ index }) => {
                         switch (index) {
-                            case 0:
-                                return <AllProducts item={item} />
+                            case 0: 
+                                return <AllProducts products={products} status={status} />
                                 break;
                             case 1:
-                                return (
-                                    <View style={{ width: deviceWidth }}>
-                                        <View style={{ width: deviceWidth, backgroundColor: 'green' }}>
-                                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: '#7F7F7F' }}>{item.name}</Text>
-                                        </View>
-                                    </View>
-                                )
+                                return <AllProducts products={processors} status={status} />
+                                break;
+                            case 2:
+                                return <AllProducts products={motherboards} status={status} />
+                                break;
+                            case 3:
+                                return <AllProducts products={graphicCards} status={status} />
+                                break;
+                            case 4:
+                                return <AllProducts products={laptops} status={status} />
+                                break;
+                            case 5:
+                                return <AllProducts products={monitors} status={status} />
+                                break;
+                            case 6:
+                                return <AllProducts products={coolers} status={status} />
+                                break;
+                            case 7:
+                                return <AllProducts products={storageDevices} status={status} />
+                                break;
+                            case 8:
+                                return <AllProducts products={processors} status={status} />
+                                break;
+                            case 9:
+                                return <AllProducts products={powerSupplies} status={status} />
+                                break;
+                            case 10:
+                                return <AllProducts products={cases} status={status} />
+                                break;
+                            case 11:
+                                return <AllProducts products={fullSets} status={status} />
+                                break;
+                            case 12:
+                                return <AllProducts products={headphones} status={status} />
                                 break;
                             default:
                                 return null

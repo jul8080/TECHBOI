@@ -85,7 +85,7 @@ const OrderScreen = () => {
                         horizontal
                         pagingEnabled
                         data={status}
-                        renderItem={({ item, index }) => {
+                        renderItem={({ index }) => {
                             switch (index) {
                                 case 0:
                                     return <AllItems />
@@ -163,40 +163,6 @@ const OrderScreen = () => {
                     </View>
                 </View>
             </View>
-
-            {/* <FlatList
-                onScroll={e => {
-                    setScrollIndex((e.nativeEvent.contentOffset.x/ deviceWidth).toFixed(0))
-                }}
-                ref={scrollX}
-                initialScrollIndex={scrollIndex}
-                showsVerticalScrollIndicator={false}
-                horizontal
-                pagingEnabled
-                data={status}
-                renderItem={({ item, index }) => {
-                    switch (index) {
-                        case 0:
-                            return <AllItems />
-                            break;
-                        case 1:
-                            return <ToShip />
-                            break;
-                        case 2:
-                            return <ToReceive />
-                            break;
-                        case 3:
-                            return <Completed />
-                            break;
-                        case 4:
-                            return <ReturnRefund />
-                            break;
-                        default:
-                            return null
-                            break;
-                    }
-                }}
-            /> */}
 
             {/* tabBar starts here... */}
             <StatusBar style={statusStyle} backgroundColor="#fff" hidden={shopLogoBackground} />
