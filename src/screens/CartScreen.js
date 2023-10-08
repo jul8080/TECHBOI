@@ -7,11 +7,10 @@ import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import PaymentMethod from "../components/method/PaymentMethod";
 import PaymentConfirmation from "../components/method/modal/PaymentConfirmation";
+import { useStatusBar } from "../Helper/Index";
 
 const CartScreen = ({ navigation }) => {
-    const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
-    const statusStyle = useState(StatusBarStyle[0])[0]
-    const shopLogoBackground = useState(false)[0]
+    const { statusStyle, shopLogoBackground } = useStatusBar()
 
     const scrollRight = useState(new Animated.Value(1000))[0] //setting to 1000 so that the modal will be hided to the right side of screentrue.
     const nativeDriver = useState(true)[0]

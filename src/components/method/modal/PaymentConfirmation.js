@@ -3,12 +3,12 @@ import { View, Text, Animated, StyleSheet, Pressable, TouchableOpacity, Image, S
 import { StatusBar } from 'expo-status-bar';
 import { deviceWidth } from '../../../utils/Dimensions'
 import PaymentMethod from "../PaymentMethod";
+import { useStatusBar } from "../../../Helper/Index";
 
 
 export default function PaymentConfirmation({ scrollRight, nativeDriver }) {
-    const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
-    const statusStyle = useState(StatusBarStyle[0])[0]
-    const shopLogoBackground = useState(false)[0]
+    const { statusStyle, shopLogoBackground } = useStatusBar
+
     const slideRightHide = () => {
         Animated.timing(scrollRight, {
             toValue: 1000,

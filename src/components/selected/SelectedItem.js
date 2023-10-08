@@ -1,10 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, Text, Image } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import { deviceWidth } from "../../utils/Dimensions";
 import { getImage } from "../../utils/ProductImage";
-export default function SelectedItem(props) {
-    const { product, loading } = props
+function SelectedItem(props) {
+    const { product } = props
     return (
         <View style={{ backgroundColor: '#fff', width: deviceWidth / 2 - 19, height: 284, borderRadius: 5, alignItems: 'stretch', paddingVertical: 10, paddingHorizontal: 10 }}>
             <Image source={getImage(product.image)} style={{ flex: 1, width: null, height: null, resizeMode: 'cover' }} />
@@ -28,3 +28,4 @@ export default function SelectedItem(props) {
 
     )
 }
+export default memo(SelectedItem)

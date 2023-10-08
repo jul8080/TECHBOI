@@ -1,14 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, Text, FlatList, Pressable, Image, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { deviceWidth } from '../../utils/Dimensions';
 import { getImage } from '../../utils/ProductImage';
 import { useNavigation } from '@react-navigation/native';
 
-export default function AllProducts(props) {
+function AllProducts(props) {
     const navigation = useNavigation()
     const { products, status } = props
     const numColumns = 2
+    const SeletedItemFuntion = (item) => {
+        navigation.navigate('SelectedItems', item)
+    }
     return (
         <View style={{ width: deviceWidth, backgroundColor: '#f1f1f1' }}>
             {status ? (
@@ -24,7 +27,7 @@ export default function AllProducts(props) {
                         keyExtractor={item => item.id.toString()}
                         renderItem={({ item }) => (
                             <Pressable
-                                onPress={() => navigation.navigate('SelectedItems', item)}
+                                onPress={() => SeletedItemFuntion(item)}
                                  style={{ paddingHorizontal: 10, paddingVertical: 20, backgroundColor: '#fff', width: deviceWidth / numColumns - 20, height: 333, borderRadius: 15, margin: 10, marginTop: 0 }}>
                                 <View style={{ backgroundColor: 'transparent', flex: 1 }}>
                                     <Image source={getImage(item.image)} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 15 }} />
@@ -50,3 +53,4 @@ export default function AllProducts(props) {
         </View >
     )
 }
+export default memo(AllProducts)

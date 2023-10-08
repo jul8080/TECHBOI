@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TextInput, Image, Pressable, ActivityIndicator, Animated } from "react-native";
+import React, { useState, useRef } from 'react'
+import { View, Text, TextInput, Image, Pressable, Animated } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { deviceWidth } from "../utils/Dimensions"
 import { Ionicons, EvilIcons, MaterialCommunityIcons, Entypo, AntDesign } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { getImage } from '../utils/ProductImage';
 import { filterFunction } from '../utils/FilterFunction'
-import SelectedItem from '../components/selected/SelectedItem';
+import { useContextApi, useStatusBar } from '../Helper/Index';
 
 const MAX_MARGIN_TOP = 30;
 const HEADER_MAX_HEIGHT = 61;
 export default function SelectedItemsScreen({ navigation, route }) {
+    const { statusStyle, shopLogoBackground } = useStatusBar()
+    const { products } = useContextApi()
     const { name, image, price, rating, status, category, id, qty } = route.params
-    const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
-    const statusStyle = useState(StatusBarStyle[0])[0]
-    const shopLogoBackground = useState(false)[0]
 
     const scrollY = useRef(new Animated.Value(0)).current
     const stickyHeader = scrollY.interpolate({
@@ -28,7 +27,6 @@ export default function SelectedItemsScreen({ navigation, route }) {
         extrapolate: 'clamp'
     })
 
-    const [loading, setLoading] = useState(true)
     const [product, setProduct] = useState({
         id,
         name,
@@ -40,57 +38,37 @@ export default function SelectedItemsScreen({ navigation, route }) {
         status: false,
 
     })
-    const [products, setProducts] = useState([])
-    const controller = new AbortController()
-
-    async function getApi() {
-        await fetch('http://192.168.0.25:3000/products')
-            .then(res => res.json())
-            .then(data => setProducts(data))
-            .catch(error => console.log(error))
-            .finally(() => {
-                setLoading(false)
-                console.log('Done fetching...')
-            })
-    }
-
-    useEffect(() => {
-        getApi()
-        return () => {
-            controller.abort()
-        }
-    }, [])
     const item = filterFunction(products, category)
     const addToCart = (product) => {
         console.log(product)
     }
     return (
-        <View style={{ flex: 1 }}>
-
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+            {/* header starts here... */}
+            <View style={{ width: deviceWidth - 35, height: 32, marginTop: 48, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', columnGap: 13 }}>
+                <Ionicons name="arrow-back-circle-outline" size={24} color="black" onPress={() => navigation.goBack()} />
+                <View style={{ flexDirection: 'row', flex: 1, height: '100%', backgroundColor: '#fff', borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                    <EvilIcons name="search" size={20} color="#BABABA" style={{ marginLeft: 15, marginRight: 8 }} />
+                    <TextInput placeholder="Search Items: " style={{ flexShrink: 1, width: '100%', height: '100%', fontFamily: 'Poppins-Regular', color: '#000', fontSize: 12 }} />
+                </View>
+                <View style={{ flexDirection: 'row', columnGap: 15 }}>
+                    <Pressable onPress={() => navigation.navigate('Cart')}>
+                        <MaterialCommunityIcons name="cart-outline" size={20} color="black" />
+                        <View style={{ backgroundColor: '#F14336', height: 15, width: 15, borderRadius: 100 / 2, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: -5, right: -5 }}>
+                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#fff' }}>3</Text>
+                        </View>
+                    </Pressable>
+                    <Entypo name="dots-three-horizontal" size={20} color="black" />
+                </View>
+            </View>
+            {/* header ends here... */}
 
             <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} showsVerticalScrollIndicator={false} onScroll={Animated.event(
                 [
                     { nativeEvent: { contentOffset: { y: scrollY } } }
                 ], { useNativeDriver: false }
             )}>
-                {/* header starts here... */}
-                <View style={{ width: deviceWidth - 35, height: 32, marginTop: 48, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', columnGap: 13 }}>
-                    <Ionicons name="arrow-back-circle-outline" size={24} color="black" onPress={() => navigation.goBack()} />
-                    <View style={{ flexDirection: 'row', flex: 1, height: '100%', backgroundColor: '#fff', borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                        <EvilIcons name="search" size={20} color="#BABABA" style={{ marginLeft: 15, marginRight: 8 }} />
-                        <TextInput placeholder="Search Items: " style={{ flexShrink: 1, width: '100%', height: '100%', fontFamily: 'Poppins-Regular', color: '#000', fontSize: 12 }} />
-                    </View>
-                    <View style={{ flexDirection: 'row', columnGap: 15 }}>
-                        <Pressable onPress={() => navigation.navigate('Cart')}>
-                            <MaterialCommunityIcons name="cart-outline" size={20} color="black" />
-                            <View style={{ backgroundColor: '#F14336', height: 15, width: 15, borderRadius: 100 / 2, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: -5, right: -5 }}>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#fff' }}>3</Text>
-                            </View>
-                        </Pressable>
-                        <Entypo name="dots-three-horizontal" size={20} color="black" />
-                    </View>
-                </View>
-                {/* header ends here... */}
+
 
                 {/* image starts here... */}
                 <View style={{ width: deviceWidth, height: 379, backgroundColor: '#fff', marginTop: 20 }}>
@@ -226,12 +204,12 @@ export default function SelectedItemsScreen({ navigation, route }) {
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 20 }}>You may also like</Text>
                     </Animated.View>
 
-                    <View style={{ flexDirection: 'row', rowGap: 5, columnGap: 15, flexWrap: 'wrap', alignItems: 'center', alignItems: 'center', paddingLeft: 11 }}>
-                        {products.map((product, index) => <SelectedItem product={product} key={index} />)}
-                    </View>
+                    {/* <WrapperItems /> */}
+
                 </View>
                 {/* more items ends here... */}
             </ScrollView>
+            {/* tabBar starts here...!!! */}
             <View style={{ height: 65, width: deviceWidth, backgroundColor: '#fff', flexDirection: 'row', marginTop: 3 }}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
                     <Pressable style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>

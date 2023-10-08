@@ -7,10 +7,9 @@ import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from 'expo-status-bar';
 import NavLinks from "../components/profile/NavLinks";
 import HelpCenter from "../components/navbar/HelpCenter";
+import { useStatusBar } from "../Helper/Index";
 const ProfileScreen = () => {
-    const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
-    const statusStyle = useState(StatusBarStyle[0])[0]
-    const shopLogoBackground = useState(false)[0]
+    const { statusStyle, shopLogoBackground } = useStatusBar( )
     const navigation = useNavigation()
     const scrollRight = useState(new Animated.Value(1000))[0]
     const nativeDriver = useState(true)[0]
@@ -55,7 +54,7 @@ const ProfileScreen = () => {
             </View>
 
             {/* tabBar starts here... */}
-            <StatusBar style={statusStyle} backgroundColor="#f1f1f1" hidden={shopLogoBackground} />
+            <StatusBar style={statusStyle}  hidden={shopLogoBackground} />
         </View>
     )
 }

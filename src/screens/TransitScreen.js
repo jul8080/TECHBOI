@@ -1,32 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, Pressable, ActivityIndicator, Image, ScrollView, Animated } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { deviceWidth } from "../utils/Dimensions";
 import { getImage } from "../utils/ProductImage";
 import HelpCenter from "../components/navbar/HelpCenter";
+import { useContextApi } from "../Helper/Index";
+import { useNavigation } from "@react-navigation/native";
 
-export default function TransitScreen({ navigation }) {
-    const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const controller = new AbortController()
-    async function getApi() {
-        await fetch('http://192.168.0.25:3000/products')
-            .then(res => res.json())
-            .then(data => setProducts(data))
-            .catch(error => console.log(error))
-            .finally(() => {
-                setLoading(false)
-                console.log('Done fetching...')
-            })
-    }
-
-    useEffect(() => {
-        getApi()
-        return () => {
-            controller.abort()
-        }
-    }, [])
+export default function TransitScreen() {
+    const { products, loading } = useContextApi()
+    const navigation = useNavigation()
 
     const scrollRight = useState(new Animated.Value(1000))[0]
     const nativeDriver = useState(true)[0]
@@ -44,7 +28,7 @@ export default function TransitScreen({ navigation }) {
             useNativeDriver: nativeDriver
         }).start()
     }
- 
+    const transit = [1, 2, 3, 4, 5]
     return (
         <View style={{ flex: 1 }}>
             {/* modal starts here... */}
@@ -61,16 +45,35 @@ export default function TransitScreen({ navigation }) {
                 </Pressable>
             </SafeAreaView>
             {/* Tracking your Parcel starts here... */}
-            <View style={{ height: 300, width: deviceWidth, backgroundColor: 'coral', marginTop: 11 }}>
-                <View style={{ width: deviceWidth, paddingHorizontal: 30, backgroundColor: 'red', paddingVertical: 5 }}>
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#7F7F7F' }}>Standard shipping through J&T Express</Text>
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#000' }}>0123456789</Text>
-                </View>
+            <View style={{ height: 300, width: deviceWidth, marginTop: 11 }}>
+                <ScrollView>
+                    <View style={{ width: deviceWidth, paddingHorizontal: 30, paddingVertical: 5, marginBottom: 17 }}>
+                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#7F7F7F' }}>Standard shipping through J&T Express</Text>
+                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#000' }}>0123456789</Text>
+                    </View>
+                    <View style={{ backgroundColor: '#fff', paddingHorizontal: 47, paddingVertical: 20 }}>
+                        {transit.map((item, index) => (
+                            <View key={index} style={{ width: deviceWidth - 60, alignSelf: 'center' }}>
+                                <View key={index} style={{ width: deviceWidth - 30, borderLeftWidth: index < transit.length - 1 ? 1 : 0, borderColor: '#4F4C4C', paddingLeft: 15, margin: 0, height: 80 }}>
+                                    <View style={{ gap: 10, flexDirection: 'row', alignItems: 'center', position: 'absolute', top: -11, left: -3 }}>
+                                        <View style={{ width: 5, height: 5, backgroundColor: '#7F7F7F', borderRadius: 100 / 2 }} />
+                                        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 15}}>({item}) In Transit</Text>
+                                    </View>
+                                    <View style={{ rowGap: 11, marginTop: 15  }}>
+                                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>Your Package is now in DAVAO-DEL-SUR.</Text>
+                                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>Sep 8, 2023 4:30 PM</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </ScrollView>
             </View>
             {/* Tracking your Parcel ends here... */}
 
             {/* All items starts here... */}
-            <View style={{  }}>
+            <View style={{ flex: 1 }}>
                 <View style={{ paddingHorizontal: 30, height: 60 }}>
                     <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: '#000', marginTop: 10 }}>You may also like</Text>
                 </View>

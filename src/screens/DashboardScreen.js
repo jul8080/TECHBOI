@@ -1,71 +1,36 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, TextInput, Image, FlatList, ImageBackground, TouchableOpacity } from "react-native";
-import { Feather } from '@expo/vector-icons';
-
+import { View, Text, TextInput, Image, FlatList, ImageBackground, TouchableOpacity, ScrollView } from "react-native";
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 // imported utils here... 
-import { deviceWidth } from '../utils/Dimensions'
-import { filterFunction } from "../utils/FilterFunction";
+import { deviceHeight, deviceWidth } from '../utils/Dimensions'
 import { images } from "../utils/ImageBackground";
 import { categories } from "../utils/Products"
 import AllProducts from "../components/categories/AllProducts";
+// import helper here...
+import { useContextApi, useStatusBar, useCategories } from "../Helper/Index";
 
 const HEADER_MAX_HEIGHT = 50;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const DashboardScreen = () => {
-    const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
-    const statusStyle = useState(StatusBarStyle[1])[0]
-    const shopLogoBackground = useState(false)[0]
-    const [products, setProducts] = useState([])
-    const [status, setStatus] = useState(true)
-    // categories here...
-    const processors = filterFunction(products, 'processor');
-    const motherboards = filterFunction(products, 'motherboard');
-    const graphicCards = filterFunction(products, 'gpu');
-    const laptops = filterFunction(products, 'laptop');
-    const monitors = filterFunction(products, 'monitor');
-    const coolers = filterFunction(products, 'cooler');
-    const storageDevices = filterFunction(products, 'storage');
-    const powerSupplies = filterFunction(products, 'psu');
-    const cases = filterFunction(products, 'case');
-    const fullSets = filterFunction(products, 'package');
-    const headphones = filterFunction(products, 'headphone');
-
-    const controller = new AbortController()
-
-    async function getApi() {
-        await fetch('http://192.168.0.25:3000/products')
-            .then(res => res.json())
-            .then(data => setProducts(data))
-            .catch(error => console.log(error))
-            .finally(() => {
-                setStatus(false)
-                console.log('Done fetching...')
-            })
-    }
-
-    useEffect(() => {
-        getApi()
-        return () => {
-            controller.abort()
-        }
-    }, [])
-
-    const productImages = {
-        image_1: require('../../assets/images/products/trends/trend01.png'),
-        image_2: require('../../assets/images/products/trends/trend02.png'),
-        image_3: require('../../assets/images/products/trends/trend03.png'),
-    }
-    const trendProducts = [
-        { id: 1, name: 'MOBILE PHONE', desc: 'Available Soon', image: productImages["image_1"] },
-        { id: 2, name: 'MORE SALES', desc: 'is coming ', image: productImages["image_2"] },
-        { id: 3, name: 'CHRISTMAS', desc: 'is coming ', image: productImages["image_3"] },
-        { id: 4, name: 'MOBILE PHONE', desc: 'Available Soon', image: productImages["image_1"] },
-        { id: 6, name: 'MORE SALES', desc: 'is coming ', image: productImages["image_2"] },
-    ]
-
+    const { products, loading } = useContextApi()
+    const { statusStyle, shopLogoBackground } = useStatusBar()
+    const {
+        processors,
+        motherboards,
+        graphicCards,
+        laptops,
+        monitors,
+        coolers,
+        storageDevices,
+        powerSupplies,
+        cases,
+        fullSets,
+        headphones
+    } = useCategories()
+    const scrollTo = useRef()
 
     const [imageBackground, setImageBackground] = useState(0)
     useEffect(() => {
@@ -79,20 +44,23 @@ const DashboardScreen = () => {
     const scrollUpdate = useRef()
     const [index, setIndex] = useState(0)
     const sales = [
-        { id: 1, images: [{ src: require('../../assets/images/products/trends/trend01.png') }, { src: require('../../assets/images/products/trends/trend02.png') }, { src: require('../../assets/images/products/trends/trend03.png') }] },
-        { id: 2, images: [{ src: require('../../assets/images/products/trends/trend03.png') }, { src: require('../../assets/images/products/trends/trend02.png') }, { src: require('../../assets/images/products/trends/trend01.png') }] },
+        { id: 1, content: [{name: 'MOBILE PHONE', desc: 'Available Soon'}, {name: 'MORE SALES', desc: 'is coming'}, {name: 'CHRISTMAS', desc: 'is coming'}], images: [{ src: require('../../assets/images/products/trends/trend01.png') }, { src: require('../../assets/images/products/trends/trend02.png') }, { src: require('../../assets/images/products/trends/trend03.png') }] },
+        { id: 2, content: [{name: 'MOBILE PHONE', desc: 'Available Soon'}, {name: 'MORE SALES', desc: 'is coming'}, {name: 'CHRISTMAS', desc: 'is coming'}], images: [{ src: require('../../assets/images/products/trends/trend03.png') }, { src: require('../../assets/images/products/trends/trend02.png') }, { src: require('../../assets/images/products/trends/trend01.png') }] },
     ]
     const scrollToIndex = (findIndex) => {
+    
         scrollX.current.scrollToIndex({
             index: findIndex,
-            animated: true
+            animated: true,
         })
     }
     useEffect(() => {
         scrollUpdate.current.scrollToIndex({
             index,
             animated: true,
-            viewPosition: .1
+            viewPosition: 0,
+            viewOffset: 10
+
         })
     }, [index])
     return (
@@ -125,8 +93,42 @@ const DashboardScreen = () => {
                 {/* header search input ends here... */}
 
                 {/* trend products start here... */}
-                <View style={{ backgroundColor: 'coral', width: deviceWidth - 35, height: 74, marginBottom: 12, alignSelf: 'center', marginTop: 20, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: deviceWidth - 35, height: 74, marginBottom: 12, alignSelf: 'center', marginTop: 20, flexDirection: 'row', alignItems: 'center' }}>
+                    <MaterialIcons name="keyboard-arrow-left" size={24} color="#7F7F7F" onPress={() => scrollTo.current.scrollTo({ x: 0, animated: true })} />
+                    <View style={{ flex: 1, height: '100%' }}>
+                        <ScrollView ref={scrollTo} horizontal pagingEnabled >
+                            {/* <View style={{ gap: 5 }}> */}
 
+                            {sales.map((item, index) => (
+                                <View key={index} style={{ marginRight: index == 0 ? 3 : 0, height: '100%', width: deviceWidth - 84, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <View style={{ width: deviceWidth / 3 - 30, height: '100%', borderRadius: 5 }}>
+                                        <Image source={item.images[0].src} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 5 }} />
+                                        <View style={{ alignItems: 'center',justifyContent: 'center', rowGap: -3, backgroundColor: '#fff', width: '100%', height: 31, position: 'absolute', bottom: 0, borderRadius: 5 }}>
+                                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10 }}>{item.content[0].name}</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 7 }}>{item.content[0].desc}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ width: deviceWidth / 3 - 30, height: '100%', borderRadius: 5 }}>
+                                        <Image source={item.images[1].src} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 5 }} />
+                                        <View style={{ alignItems: 'center',justifyContent: 'center', rowGap: -3, backgroundColor: '#fff', width: '100%', height: 31, position: 'absolute', bottom: 0, borderRadius: 5 }}>
+                                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10 }}>{item.content[1].name}</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 7 }}>{item.content[1].desc}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ width: deviceWidth / 3 - 30, height: '100%', borderRadius: 5 }}>
+                                        <Image source={item.images[2].src} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 5 }} />
+                                        <View style={{ alignItems: 'center',justifyContent: 'center', rowGap: -3, backgroundColor: '#fff', width: '100%', height: 31, position: 'absolute', bottom: 0, borderRadius: 5 }}>
+                                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10 }}>{item.content[2].name}</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 7 }}>{item.content[2].desc}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            ))}
+                            {/* </View> */}
+
+                        </ScrollView>
+                    </View>
+                    <MaterialIcons name="keyboard-arrow-right" size={24} color="#7F7F7F" onPress={() => scrollTo.current.scrollTo({ x: deviceWidth, animated: true })} />
                 </View>
                 {/* trend products ends here... */}
 
@@ -159,6 +161,9 @@ const DashboardScreen = () => {
                         setIndex((x / deviceWidth).toFixed(0))
                     }}
                     ref={scrollX}
+                    getItemLayout={(_, index) => (
+                        {length: deviceWidth, offset: deviceWidth * index, index}
+                    )}
                     initialScrollIndex={index}
                     scrollEventThrottle={16}
                     pagingEnabled
@@ -167,44 +172,44 @@ const DashboardScreen = () => {
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ index }) => {
                         switch (index) {
-                            case 0: 
-                                return <AllProducts products={products} status={status} />
+                            case 0:
+                                return <AllProducts products={products} loading={loading} />
                                 break;
                             case 1:
-                                return <AllProducts products={processors} status={status} />
+                                return <AllProducts products={processors} loading={loading} />
                                 break;
                             case 2:
-                                return <AllProducts products={motherboards} status={status} />
+                                return <AllProducts products={motherboards} loading={loading} />
                                 break;
                             case 3:
-                                return <AllProducts products={graphicCards} status={status} />
+                                return <AllProducts products={graphicCards} loading={loading} />
                                 break;
                             case 4:
-                                return <AllProducts products={laptops} status={status} />
+                                return <AllProducts products={laptops} loading={loading} />
                                 break;
                             case 5:
-                                return <AllProducts products={monitors} status={status} />
+                                return <AllProducts products={monitors} loading={loading} />
                                 break;
                             case 6:
-                                return <AllProducts products={coolers} status={status} />
+                                return <AllProducts products={coolers} loading={loading} />
                                 break;
                             case 7:
-                                return <AllProducts products={storageDevices} status={status} />
+                                return <AllProducts products={storageDevices} loading={loading} />
                                 break;
                             case 8:
-                                return <AllProducts products={processors} status={status} />
+                                return <AllProducts products={processors} loading={loading} />
                                 break;
                             case 9:
-                                return <AllProducts products={powerSupplies} status={status} />
+                                return <AllProducts products={powerSupplies} loading={loading} />
                                 break;
                             case 10:
-                                return <AllProducts products={cases} status={status} />
+                                return <AllProducts products={cases} loading={loading} />
                                 break;
                             case 11:
-                                return <AllProducts products={fullSets} status={status} />
+                                return <AllProducts products={fullSets} loading={loading} />
                                 break;
                             case 12:
-                                return <AllProducts products={headphones} status={status} />
+                                return <AllProducts products={headphones} loading={loading} />
                                 break;
                             default:
                                 return null
@@ -216,9 +221,9 @@ const DashboardScreen = () => {
             {/* navbar items ends here... */}
 
             {/* products ends here... */}
-            <StatusBar style={statusStyle} backgroundColor="#222222" hidden={shopLogoBackground} />
+            <StatusBar style='light' hidden={shopLogoBackground} />
         </View >
     )
 }
 
-export default DashboardScreen
+export default memo(DashboardScreen)

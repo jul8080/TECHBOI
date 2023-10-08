@@ -9,6 +9,7 @@ import SignUpScreen from './src/authScreens/SignUpScreen';
 import TabScreen from './src/screens/TabNavigator/TabScreen';
 import SelectedItemsScreen from './src/screens/SelectedItemsScreen';
 import TransitScreen from './src/screens/TransitScreen';
+import { Provider } from './src/Helper/Index';
 
 const Stack = createStackNavigator()
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
     return null
   } 
   return (
-    <>
+    <Provider>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="SignIn"
@@ -39,7 +40,7 @@ export default function App() {
           <Stack.Screen name="Transit" component={TransitScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer >
-    </>
+    </Provider>
   );
 }
 // json-server --host 0.0.0.0 ./data/db.json
