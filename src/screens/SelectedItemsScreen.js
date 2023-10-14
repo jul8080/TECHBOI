@@ -7,12 +7,13 @@ import { ScrollView } from "react-native-gesture-handler";
 import { getImage } from '../utils/ProductImage';
 import { filterFunction } from '../utils/FilterFunction'
 import { useContextApi, useStatusBar } from '../Helper/Index';
+import { ACTIONS } from '../Helper/reducer/actions/CartActions';
 
 const MAX_MARGIN_TOP = 30;
 const HEADER_MAX_HEIGHT = 61;
 export default function SelectedItemsScreen({ navigation, route }) {
     const { statusStyle, shopLogoBackground } = useStatusBar()
-    const { products } = useContextApi()
+    const { products, state, dispatch } = useContextApi()
     const { name, image, price, rating, status, category, id, qty } = route.params
 
     const scrollY = useRef(new Animated.Value(0)).current
@@ -40,8 +41,9 @@ export default function SelectedItemsScreen({ navigation, route }) {
     })
     const item = filterFunction(products, category)
     const addToCart = (product) => {
-        console.log(product)
+        dispatch({type: ACTIONS.ADD_TO_CART, payload: product})
     }
+    console.log(state.cart.length)
     return (
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
             {/* header starts here... */}
@@ -55,7 +57,7 @@ export default function SelectedItemsScreen({ navigation, route }) {
                     <Pressable onPress={() => navigation.navigate('Cart')}>
                         <MaterialCommunityIcons name="cart-outline" size={20} color="black" />
                         <View style={{ backgroundColor: '#F14336', height: 15, width: 15, borderRadius: 100 / 2, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: -5, right: -5 }}>
-                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#fff' }}>3</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#fff' }}>{state.cart.length}</Text>
                         </View>
                     </Pressable>
                     <Entypo name="dots-three-horizontal" size={20} color="black" />

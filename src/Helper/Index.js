@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useReducer, useMemo} from "react";
+import { cartReducer, initialState } from "./reducer/CartReducer";
 
 
 const contextApi = React.createContext()
@@ -18,7 +19,13 @@ const useStatusBar = () => {
 
 
 function Provider({ children }) {
-    
+    // useReducer for cart here...
+    const [state, dispatch] = useReducer(cartReducer, initialState)
+    const bagTotal = () => {
+        const total = state.cart.reduce((total, item) => (total += item.quantity * item.price), 0);
+        state.totalAmount = total === 0 ? 0 : total + state.chargeFee;
+        return total;
+    };
     // status bar starts here...
     const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
     const statusStyle = useState(StatusBarStyle[0])[0]
@@ -33,7 +40,7 @@ function Provider({ children }) {
     // categories starts here...
     const filterFunction = (array, category) => {
         return array.filter(item => item.category === category);
-    
+
     }
     const processors = filterFunction(products, 'processor');
     const motherboards = filterFunction(products, 'motherboard');
@@ -69,7 +76,7 @@ function Provider({ children }) {
     }, [])
     // api fetch ends here...
     return (
-        <contextApi.Provider value={{ products, loading }}>
+        <contextApi.Provider value={{ products, loading, state, dispatch, bagTotal }}>
             <statusBarContext.Provider value={{ statusStyle, shopLogoBackground }}>
                 <categoryContext.Provider value={{
                     processors,

@@ -9,6 +9,8 @@ import DashboardScreen from "../DashboardScreen";
 import CartScreen from "../CartScreen";
 import OrderScreen from "../OrderScreen";
 import ProfileScreen from "../ProfileScreen";
+// imported helper here...
+import { useContextApi } from "../../Helper/Index";
 
 const screenOptions = {
     tabBarShowLabel: false,
@@ -26,6 +28,7 @@ const screenOptions = {
 
 const TabScreen = () => {
     const Tab = createBottomTabNavigator();
+    const { state } = useContextApi()
     return (
             <Tab.Navigator screenOptions={screenOptions}>
 
@@ -55,7 +58,7 @@ const TabScreen = () => {
                 />
                 <Tab.Screen name="Cart" component={CartScreen}
                     options={{
-                        tabBarBadge: 3,
+                        tabBarBadge: state.cart.length,
                         tabBarBadgeStyle: { backgroundColor: '#F14336', color: '#fff' },
                         tabBarIcon: ({ focused }) => {
                             return (
