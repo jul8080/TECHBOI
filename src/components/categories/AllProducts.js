@@ -4,10 +4,12 @@ import { Entypo } from '@expo/vector-icons';
 import { deviceWidth } from '../../utils/Dimensions';
 import { getImage } from '../../utils/ProductImage';
 import { useNavigation } from '@react-navigation/native';
+import { useStatusBar } from '../../Helper/Index';
 
 function AllProducts(props) {
     const navigation = useNavigation()
     const { products, status } = props
+    const { onViewCallBack,  viewConfigRef } = useStatusBar()
     const numColumns = 2
     const SeletedItemFuntion = (item) => {
         navigation.navigate('SelectedItems', item)
@@ -21,6 +23,9 @@ function AllProducts(props) {
             ) : (
                 <View style={{ alignItems: 'center', paddingBottom: 45 }}>
                     <FlatList
+                        onViewableItemsChanged={onViewCallBack}
+                        viewabilityConfig={viewConfigRef}
+                        removeClippedSubviews={true}
                         data={products}
                         numColumns={numColumns}
                         showsVerticalScrollIndicator={false}

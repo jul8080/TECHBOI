@@ -1,25 +1,27 @@
-import React, { useState } from "react";
-import { View, Text, Animated, StyleSheet, Pressable, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useState, memo } from "react";
+import { View, Text, Pressable, TouchableOpacity, Image, FlatList } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { deviceWidth } from '../../../utils/Dimensions'
 import PaymentMethod from "../PaymentMethod";
-import { useStatusBar } from "../../../Helper/Index";
+import { useContextApi, useStatusBar } from "../../../Helper/Index";
 import DeliveryAddress from "./DeliveryAddress";
+import ModalBody from "./ModalBody";
 
 
-export default function PaymentConfirmation({ scrollRight, nativeDriver }) {
+function PaymentConfirmation() {
+    const { selectedAddress, showPaymentConfirmation, setShowPaymentConfirmation } = useContextApi()
     const { statusStyle, shopLogoBackground } = useStatusBar
-    const [visible, setVisible] = useState(true)
+    const [visible, setVisible] = useState(false)
     const showModal = () => setVisible(true)
-    const hideModal = () => setVisible(false)
-    const slideRightHide = () => {
-        Animated.timing(scrollRight, {
-            toValue: 1000,
-            duration: 500,
-            useNativeDriver: nativeDriver
-        }).start()
+
+    const hideModal = () => {
+        setVisible(false)
+    }
+    const cancelModal = () => {
+        setShowPaymentConfirmation(false)
         setSelect("")
     }
+ 
 
     const [select, setSelect] = useState("")
     const cards = [
@@ -27,28 +29,42 @@ export default function PaymentConfirmation({ scrollRight, nativeDriver }) {
         { id: 2, desc: '**** **** **** 5678', category: 'GCash', image: require('../../../../assets/images/cards/gcash.png') },
         { id: 3, desc: '**** **** **** 9101', category: 'Maya', image: require('../../../../assets/images/cards/maya.png') },
     ]
+    // const selectedAddress = stateAddress.address.filter(status => status.completed === true)
     return (
-        <Animated.View style={{ ...StyleSheet.absoluteFillObject, transform: [{ translateX: scrollRight }], flex: 1, backgroundColor: '#f1f1f1', zIndex: 1 }}>
-            
-            {/* modal starts here... */}
-            <DeliveryAddress visible={visible} hideModal={hideModal} />
-            {/* modal ends here... */}
+        <ModalBody visible={showPaymentConfirmation} animationType="slide" onRequestClose={() => setShowPaymentConfirmation(false)}>
+            <View style={{ flex : 1, backgroundColor: '#f1f1f1'}}> 
 
-            <View style={{ height: 85, width: deviceWidth, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, color: '#000', marginBottom: 5 }}>Payment Confirmation</Text>
-            </View>
-            <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16}>
+                {/* modal starts here... */}
+                <DeliveryAddress visible={visible} hideModal={hideModal} />
+                {/* modal ends here... */}
+
+                <View style={{ height: 69, width: deviceWidth, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, color: '#000', marginBottom: 5 }}>Payment Confirmation</Text>
+                </View>
                 {/* Shipping address starts here... */}
                 <View style={{ backgroundColor: '#fff', paddingLeft: 10, paddingRight: 15, marginTop: 1, paddingVertical: 5 }}>
                     <View>
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#7F7F7F' }}>Shipping address</Text>
+
                         <Pressable
-                         onPress={showModal}
-                         style={{ marginLeft: 'auto' }}><Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#DB3022' }}>Change</Text></Pressable>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>Jul Punding</Text>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#222222' }}>Phone Number <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#425466' }}>09102345678</Text></Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>Block 4, Marang,</Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>Davao City, Philippines</Text>
+                            onPress={showModal}
+                            style={{ marginLeft: 'auto' }}>
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#DB3022' }}>Change</Text>
+                        </Pressable>
+                        {selectedAddress.length <= 0 && <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#d5d5d5' }}>Add address</Text>}
+                        <FlatList
+                            removeClippedSubviews={true}
+                            data={selectedAddress}
+                            keyExtractor={(_, index) => index.toString()}
+                            renderItem={({ item: person }) => (
+                                <View>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>{person.name}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#222222' }}>Phone Number <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#425466' }}>{person.number}</Text></Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>{person.address}</Text>
+                                </View>
+                            )}
+                        />
+
                     </View>
                 </View>
 
@@ -78,7 +94,7 @@ export default function PaymentConfirmation({ scrollRight, nativeDriver }) {
                 {/* Payment Details ends here... */}
 
                 <View style={{ width: deviceWidth, marginBottom: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 33, paddingTop: 10 }}>
-                    <Pressable onPress={slideRightHide} disabled={false} style={{ backgroundColor: '#FE3D3D', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8, }}>
+                    <Pressable onPress={cancelModal} disabled={false} style={{ backgroundColor: '#FE3D3D', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8, }}>
                         <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 11, color: '#fff' }}>Cancel</Text>
                     </Pressable>
                     {select ? (
@@ -91,10 +107,12 @@ export default function PaymentConfirmation({ scrollRight, nativeDriver }) {
                         </Pressable>
                     )}
                 </View>
-                {/* tabBar starts here... */}
-            </ScrollView>
+            </View>
+            {/* tabBar starts here... */}
             <StatusBar style={statusStyle} backgroundColor="#fff" hidden={shopLogoBackground} />
-        </Animated.View>
+        </ModalBody>
     )
 
 }
+
+export default memo(PaymentConfirmation)

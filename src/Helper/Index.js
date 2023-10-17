@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext, useReducer, useMemo} from "react";
+import React, { useState, useEffect, useContext, useReducer, useCallback, useRef } from "react";
 import { cartReducer, initialState } from "./reducer/CartReducer";
+import { addressReducer, initialStateAddress } from "./reducer/AddressReducer";
 
 
 const contextApi = React.createContext()
@@ -19,6 +20,12 @@ const useStatusBar = () => {
 
 
 function Provider({ children }) {
+    const onViewCallBack = useCallback((viewableItems)=> {
+        console.log(viewableItems)
+        // Use viewable items in state or as intended
+    }, []) // any dependencies that require the function to be "redeclared"
+  
+    const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 }).current
     // useReducer for cart here...
     const [state, dispatch] = useReducer(cartReducer, initialState)
     const bagTotal = () => {
@@ -26,6 +33,9 @@ function Provider({ children }) {
         state.totalAmount = total === 0 ? 0 : total + state.chargeFee;
         return total;
     };
+    // useReducer for address here...
+    const [stateAddress, dispatchAddress] = useReducer(addressReducer, initialStateAddress)
+    const selectedAddress = stateAddress.address.filter(status => status.completed === true)
     // status bar starts here...
     const StatusBarStyle = ['auto', 'inverted', 'light', 'dark']
     const statusStyle = useState(StatusBarStyle[0])[0]
@@ -35,6 +45,18 @@ function Provider({ children }) {
     // useStates starts here...
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
+    const [popupMessage, setPopupMessage] = useState(false)
+    const [fname, setFname] = useState('')
+    const [number, setNumber] = useState('')
+    const [address, setAddress] = useState('')
+    const [city, setCity] = useState('')
+    const [region, setRegion] = useState('')
+    const [zcode, setZcode] = useState('')
+    const [country, setCountry] = useState('')
+    const [editData, setEditData] = useState('')
+    const [showCountryModal, setShowCountryModal] = useState(false)
+    const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false)
+    const [showHelpCenter, setShowHelpCenter] = useState(false)
     // useStates ends here...
 
     // categories starts here...
@@ -75,9 +97,45 @@ function Provider({ children }) {
         }
     }, [])
     // api fetch ends here...
+
     return (
-        <contextApi.Provider value={{ products, loading, state, dispatch, bagTotal }}>
-            <statusBarContext.Provider value={{ statusStyle, shopLogoBackground }}>
+        <contextApi.Provider
+            value={{
+                showHelpCenter,
+                setShowHelpCenter,
+                showPaymentConfirmation,
+                setShowPaymentConfirmation,
+                showCountryModal,
+                setShowCountryModal,
+                editData,
+                setEditData,
+                fname,
+                number,
+                address,
+                city,
+                region,
+                zcode,
+                country,
+                setFname,
+                setNumber,
+                setAddress,
+                setCity,
+                setRegion,
+                setZcode,
+                setCountry,
+
+                products,
+                loading,
+                state,
+                dispatch,
+                bagTotal,
+                stateAddress,
+                dispatchAddress,
+                selectedAddress,
+                popupMessage,
+                setPopupMessage
+            }}>
+            <statusBarContext.Provider value={{ statusStyle, shopLogoBackground, onViewCallBack,  viewConfigRef}}>
                 <categoryContext.Provider value={{
                     processors,
                     motherboards,
@@ -91,7 +149,7 @@ function Provider({ children }) {
                     fullSets,
                     headphones
                 }}>
-                    {children}
+                        {children}
                 </categoryContext.Provider>
             </statusBarContext.Provider>
         </contextApi.Provider>
@@ -102,5 +160,5 @@ export {
     Provider,
     useContextApi,
     useStatusBar,
-    useCategories
+    useCategories,
 }

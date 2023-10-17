@@ -1,16 +1,12 @@
 import React, { memo } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Pressable, Text, Image } from "react-native";
 import { deviceWidth } from "../../utils/Dimensions";
 import { getImage } from "../../utils/ProductImage";
-
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
-function AllItems(props) {
-
-    const { item } = props
+function YouMayAlsoLike({item}) {
     const navigation = useNavigation()
-
     return (
         <Pressable
             onPress={() => navigation.navigate('SelectedItems', item)}
@@ -35,4 +31,4 @@ function AllItems(props) {
         </Pressable>
     )
 }
-export default memo(AllItems)
+export default memo(YouMayAlsoLike)

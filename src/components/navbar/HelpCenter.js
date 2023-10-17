@@ -1,17 +1,21 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Animated, ScrollView } from 'react-native';
+import React, { } from "react";
+import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
 import { deviceWidth } from "../../utils/Dimensions";
 import HelpOptions from "../helpCenter/HelpOptions";
 import { } from "react-native-gesture-handler";
+import ModalBody from "../method/modal/ModalBody";
+import { useContextApi, useStatusBar } from "../../Helper/Index";
+import { StatusBar } from 'expo-status-bar';
 
-export default function HelpCenter(props) {
-    const { scrollRight, slideRightHide } = props
+export default function HelpCenter() {
+    const { showHelpCenter, setShowHelpCenter } = useContextApi()
+    const { statusStyle, shopLogoBackground } = useStatusBar()
     return (
-        <Animated.View style={{ ...StyleSheet.absoluteFill,flex: 1, backgroundColor: '#f1f1f1', zIndex: 1, transform: [{ translateX: scrollRight }] }}>
-            <SafeAreaView style={{ backgroundColor: '#fff', width: deviceWidth, height: 86, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
-                <Ionicons name="arrow-back-circle-outline" size={24} color="black" onPress={slideRightHide} style={{ position: 'absolute', left: 30, bottom: 6 }} />
+        <ModalBody visible={showHelpCenter} animationType="slide" onRequestClose={() => setShowHelpCenter(false)}>
+            <SafeAreaView style={{ backgroundColor: '#fff', width: deviceWidth, height: 66, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
+                <Ionicons name="arrow-back-circle-outline" size={24} color="black" onPress={() => setShowHelpCenter(false)} style={{ position: 'absolute', left: 30, bottom: 6 }} />
                 <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, marginBottom: 6, color: '#000' }}>Help Center</Text>
             </SafeAreaView>
             <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
@@ -54,6 +58,7 @@ export default function HelpCenter(props) {
                     </View>
                 </View>
             </ScrollView>
-        </Animated.View>
+            <StatusBar style={statusStyle} backgroundColor="#fff" hidden={shopLogoBackground} />
+        </ModalBody>
     )
 }

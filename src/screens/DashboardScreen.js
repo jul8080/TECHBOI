@@ -164,6 +164,8 @@ const DashboardScreen = () => {
                     getItemLayout={(_, index) => (
                         {length: deviceWidth, offset: deviceWidth * index, index}
                     )}
+                    estimatedItemSize={200}
+                    removeClippedSubviews={true}
                     initialScrollIndex={index}
                     scrollEventThrottle={16}
                     pagingEnabled

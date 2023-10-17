@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { SimpleLineIcons } from '@expo/vector-icons';
-import { deviceWidth } from "../../utils/Dimensions";
 
 export default function NavLinks(props) {
     return (

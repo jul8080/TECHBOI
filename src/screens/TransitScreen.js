@@ -1,38 +1,23 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, ActivityIndicator, Image, ScrollView, Animated } from 'react-native';
+import React, { } from "react";
+import { View, Text, Pressable, ActivityIndicator, ScrollView, FlatList } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { deviceWidth } from "../utils/Dimensions";
-import { getImage } from "../utils/ProductImage";
 import HelpCenter from "../components/navbar/HelpCenter";
-import { useContextApi } from "../Helper/Index";
+import { useContextApi, useStatusBar } from "../Helper/Index";
 import { useNavigation } from "@react-navigation/native";
+import YouMayAlsoLike from "../components/trackingparcelitems/YouMayAlsoLike";
 
 export default function TransitScreen() {
-    const { products, loading } = useContextApi()
+    const { products, loading, setShowHelpCenter } = useContextApi()
+    const { onViewCallBack,  viewConfigRef } = useStatusBar()
     const navigation = useNavigation()
 
-    const scrollRight = useState(new Animated.Value(1000))[0]
-    const nativeDriver = useState(true)[0]
-    const slideRight = () => {
-        Animated.timing(scrollRight, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: nativeDriver
-        }).start()
-    }
-    const slideRightHide = () => {
-        Animated.timing(scrollRight, {
-            toValue: 1000,
-            duration: 500,
-            useNativeDriver: nativeDriver
-        }).start()
-    }
     const transit = [1, 2, 3, 4, 5]
     return (
         <View style={{ flex: 1 }}>
             {/* modal starts here... */}
-            <HelpCenter scrollRight={scrollRight} nativeDriver={nativeDriver} slideRightHide={slideRightHide} />
+            <HelpCenter />
             {/* modal ends here... */}
             <SafeAreaView style={{ backgroundColor: '#fff', width: deviceWidth, height: 86, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', columnGap: 13, paddingHorizontal: 23 }}>
                 <AntDesign name="arrowleft" size={15} color="black" onPress={() => navigation.goBack()} />
@@ -40,7 +25,7 @@ export default function TransitScreen() {
                     <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15 }}>Tracking your Parcel</Text>
                     <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 12, color: '#7F7F7F' }}>3 Items</Text>
                 </View>
-                <Pressable onPress={slideRight}>
+                <Pressable onPress={() => setShowHelpCenter(true)}>
                     <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 10, color: '#7F7F7F' }}>Help</Text>
                 </Pressable>
             </SafeAreaView>
@@ -57,9 +42,9 @@ export default function TransitScreen() {
                                 <View key={index} style={{ width: deviceWidth - 30, borderLeftWidth: index < transit.length - 1 ? 1 : 0, borderColor: '#4F4C4C', paddingLeft: 15, margin: 0, height: 80 }}>
                                     <View style={{ gap: 10, flexDirection: 'row', alignItems: 'center', position: 'absolute', top: -11, left: -3 }}>
                                         <View style={{ width: 5, height: 5, backgroundColor: '#7F7F7F', borderRadius: 100 / 2 }} />
-                                        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 15}}>({item}) In Transit</Text>
+                                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>({item}) In Transit</Text>
                                     </View>
-                                    <View style={{ rowGap: 11, marginTop: 15  }}>
+                                    <View style={{ rowGap: 11, marginTop: 15 }}>
                                         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>Your Package is now in DAVAO-DEL-SUR.</Text>
                                         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>Sep 8, 2023 4:30 PM</Text>
                                     </View>
@@ -86,34 +71,24 @@ export default function TransitScreen() {
 
                     ) :
                     (
-                        <ScrollView bounces={false} showsVerticalScrollIndicator={false} >
-                            <View style={{ paddingTop: 0, backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, flexDirection: 'row', gap: 15, flexWrap: 'wrap', alignItems: 'center', paddingLeft: 14 }}>
-                                {products.map((item, index) => (
-                                    <Pressable
-                                        key={index}
-                                        onPress={() => navigation.navigate('SelectedItems', item)}
-                                        style={{ backgroundColor: '#fff', width: deviceWidth / 2 - 19, height: 284, borderRadius: 15, alignItems: 'stretch', paddingVertical: 20, paddingHorizontal: 10, marginTop: 12 }}
-                                    >
-                                        <View style={{ backgroundColor: '#fff', flexGrow: 1, alignItems: 'center', justifyContent: 'cover', borderRadius: 15 }}>
-                                            <Image source={getImage(item.image)} style={{ flex: 1, width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 15 }} />
-                                        </View>
-                                        <View style={{ backgroundColor: '#fff', height: 116 }}>
-                                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, marginTop: 5 }}>{item.name}</Text>
-                                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 20, color: '#FF2E2E' }}>₱{item.price}</Text>
+                        <View style={{ alignItems: 'center' }}>
+                            <FlatList
+                                onViewableItemsChanged={onViewCallBack}
+                                viewabilityConfig={viewConfigRef}
+                                removeClippedSubviews={true}
+                                numColumns={2}
+                                data={products}
+                                keyExtractor={(_, index) => index.toString()}
+                                renderItem={({ item }) => <YouMayAlsoLike item={item} />}
+                            />
+                        </View>
 
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <View style={{ flexDirection: 'row', marginRight: 5, alignItems: 'center', columnGap: 2 }}>
-                                                    <FontAwesome name="star" size={10} color="#FBBB00" />
-                                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F' }}>4.8</Text>
-                                                </View>
-                                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F', marginRight: 5 }}>1,150</Text>
-                                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F' }}>Sould Out</Text>
-                                            </View>
-                                        </View>
-                                    </Pressable>
-                                ))}
-                            </View>
-                        </ScrollView>
+                        // <ScrollView bounces={false} showsVerticalScrollIndicator={false} >
+                        //     <View style={{ paddingTop: 0, backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, flexDirection: 'row', gap: 15, flexWrap: 'wrap', alignItems: 'center', paddingLeft: 14 }}>
+                        //         {products.map((item, index) => <YouMayAlsoLike item={item} key={index} />)}
+
+                        //     </View>
+                        // </ScrollView>
 
                     )}
             </View>
