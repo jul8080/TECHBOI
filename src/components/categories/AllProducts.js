@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 import { View, Text, FlatList, Pressable, Image, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { deviceWidth } from '../../utils/Dimensions';
@@ -26,6 +26,8 @@ function AllProducts(props) {
                         onViewableItemsChanged={onViewCallBack}
                         viewabilityConfig={viewConfigRef}
                         removeClippedSubviews={true}
+                        initialNumToRender={4}
+                        estimatedItemSize={200}
                         data={products}
                         numColumns={numColumns}
                         showsVerticalScrollIndicator={false}
@@ -38,12 +40,12 @@ function AllProducts(props) {
                                     <Image source={getImage(item.image)} style={{ flex: 1, width: null, height: null, resizeMode: 'cover', borderRadius: 15 }} />
                                 </View>
                                 <View style={{ backgroundColor: 'transparent', height: 120, paddingVertical: 5 }}>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 13, color: '#000' }}>EDIFIER W800BT PLUS BLUETOOTH STEREO HEA...</Text>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 20, color: '#FF2E2E' }}>₱1,650</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 13, color: '#000' }}>{item.name}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 20, color: '#FF2E2E' }}>₱{item.price.toLocaleString()}</Text>
                                     <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <Entypo name="star" size={10} color="#FBBB00" />
-                                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F' }}>4.8</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F' }}>{item.rating}</Text>
                                         </View>
                                         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 10, color: '#7F7F7F' }}>1,150 Sold out</Text>
                                     </View>

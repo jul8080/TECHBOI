@@ -1,16 +1,18 @@
 import React, { useState, memo } from "react";
-import { View, Text, Pressable, TouchableOpacity, Image, FlatList } from "react-native";
+import { View, Text, Pressable, TouchableOpacity, FlatList } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { deviceWidth } from '../../../utils/Dimensions'
 import PaymentMethod from "../PaymentMethod";
 import { useContextApi, useStatusBar } from "../../../Helper/Index";
 import DeliveryAddress from "./DeliveryAddress";
 import ModalBody from "./ModalBody";
+import AddressDefault from "../../address/AddressDefault";
+import Cards from "../../payment/Cards";
 
 
 function PaymentConfirmation() {
-    const { selectedAddress, showPaymentConfirmation, setShowPaymentConfirmation } = useContextApi()
-    const { statusStyle, shopLogoBackground } = useStatusBar
+    const { selectedAddress, showPaymentConfirmation, setShowPaymentConfirmation, select, setSelect } = useContextApi()
+    const { statusStyle, shopLogoBackground, onViewCallBack, viewConfigRef } = useStatusBar
     const [visible, setVisible] = useState(false)
     const showModal = () => setVisible(true)
 
@@ -21,9 +23,9 @@ function PaymentConfirmation() {
         setShowPaymentConfirmation(false)
         setSelect("")
     }
- 
 
-    const [select, setSelect] = useState("")
+
+
     const cards = [
         { id: 1, desc: 'Cash On Delivery', category: 'COD', image: '' },
         { id: 2, desc: '**** **** **** 5678', category: 'GCash', image: require('../../../../assets/images/cards/gcash.png') },
@@ -32,7 +34,7 @@ function PaymentConfirmation() {
     // const selectedAddress = stateAddress.address.filter(status => status.completed === true)
     return (
         <ModalBody visible={showPaymentConfirmation} animationType="slide" onRequestClose={() => setShowPaymentConfirmation(false)}>
-            <View style={{ flex : 1, backgroundColor: '#f1f1f1'}}> 
+            <View style={{ flex: 1, backgroundColor: '#f1f1f1' }}>
 
                 {/* modal starts here... */}
                 <DeliveryAddress visible={visible} hideModal={hideModal} />
@@ -53,16 +55,14 @@ function PaymentConfirmation() {
                         </Pressable>
                         {selectedAddress.length <= 0 && <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#d5d5d5' }}>Add address</Text>}
                         <FlatList
+                            onViewableItemsChanged={onViewCallBack}
+                            viewabilityConfig={viewConfigRef}
                             removeClippedSubviews={true}
+                            initialNumToRender={4}
+                            estimatedItemSize={200}
                             data={selectedAddress}
                             keyExtractor={(_, index) => index.toString()}
-                            renderItem={({ item: person }) => (
-                                <View>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>{person.name}</Text>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#222222' }}>Phone Number <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#425466' }}>{person.number}</Text></Text>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#222222' }}>{person.address}</Text>
-                                </View>
-                            )}
+                            renderItem={_renderAddress}
                         />
 
                     </View>
@@ -73,38 +73,38 @@ function PaymentConfirmation() {
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#7F7F7F' }}>Payment Method</Text>
                         <Pressable style={{ marginLeft: 'auto' }}><Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#DB3022' }}>Change</Text></Pressable>
                         <View style={{ rowGap: 10 }}>
-                            {cards.map((card, index) => (
-                                <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 75, paddingLeft: 16 }}>
-                                    {card.image !== '' ? <Image source={card.image} /> : <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 14, color: '#000000' }}>COD</Text>}
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: card.category === 'COD' ? '#8BC34A' : '#222222' }}>{card.desc}</Text>
-                                    <TouchableOpacity onPress={() => setSelect(card.category)}>
-                                        <View style={{ borderWidth: 1, borderColor: '#7F7F7F', height: 14, width: 14, borderRadius: 100 / 2, alignItems: 'center', justifyContent: 'center' }}>
-                                            {select === card.category && <View style={{ backgroundColor: '#7F7F7F', width: 14, height: 14, borderRadius: 100 / 2 }} />}
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
+                            <FlatList
+                                onViewableItemsChanged={onViewCallBack}
+                                viewabilityConfig={viewConfigRef}
+                                removeClippedSubviews={true}
+                                initialNumToRender={4}
+                                estimatedItemSize={200}
+                                data={cards}
+                                keyExtractor={(_, index) => index.toString()}
+                                renderItem={_renderCards}
+                            />
+
                         </View>
                     </View>
                 </View>
                 {/* Shipping address ends here... */}
 
                 {/* Payment Details starts here... */}
-                <PaymentMethod value={0} marginTop={1} select={select} />
+                <PaymentMethod value={0} marginTop={1} />
                 {/* Payment Details ends here... */}
 
                 <View style={{ width: deviceWidth, marginBottom: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 33, paddingTop: 10 }}>
-                    <Pressable onPress={cancelModal} disabled={false} style={{ backgroundColor: '#FE3D3D', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8, }}>
+                    <TouchableOpacity activeOpacity={.8} onPress={cancelModal} disabled={false} style={{ backgroundColor: '#FE3D3D', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8, }}>
                         <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 11, color: '#fff' }}>Cancel</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                     {select ? (
-                        <Pressable onPress={() => alert(123)} style={{ backgroundColor: '#000000', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
+                        <TouchableOpacity activeOpacity={.8} onPress={() => alert(123)} style={{ backgroundColor: '#000000', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 11, color: '#fff' }}>Confirm</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     ) : (
-                        <Pressable onPress={() => alert(123)} disabled={true} style={{ backgroundColor: !select && '#D5D5D5', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
+                        <TouchableOpacity activeOpacity={.8} onPress={() => alert(123)} disabled={true} style={{ backgroundColor: !select && '#D5D5D5', width: 115, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 11, color: !select && '#f1f1f1' }}>Confirm</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     )}
                 </View>
             </View>
@@ -114,5 +114,6 @@ function PaymentConfirmation() {
     )
 
 }
-
+const _renderAddress = ({ item: person }) => <AddressDefault person={person} />
+const _renderCards = ({ item: card }) => <Cards card={card} />
 export default memo(PaymentConfirmation)

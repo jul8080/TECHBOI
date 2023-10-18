@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, TextInput, Image, Pressable, Animated } from "react-native";
+import { View, Text, TextInput, Image, Pressable, Animated, TouchableOpacity } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { deviceWidth } from "../utils/Dimensions"
 import { Ionicons, EvilIcons, MaterialCommunityIcons, Entypo, AntDesign } from '@expo/vector-icons';
@@ -214,22 +214,22 @@ export default function SelectedItemsScreen({ navigation, route }) {
             {/* tabBar starts here...!!! */}
             <View style={{ height: 65, width: deviceWidth, backgroundColor: '#fff', flexDirection: 'row', marginTop: 3 }}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                    <Pressable style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>
+                    <TouchableOpacity activeOpacity={.5} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>
                         <MaterialCommunityIcons name="storefront-outline" size={15} color="black" />
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 10, color: '#000' }}>Visit Shop</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                    <Pressable onPress={() => addToCart(product)} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>
+                    <TouchableOpacity activeOpacity={.5} onPress={() => addToCart(product)} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>
                         <MaterialCommunityIcons name="cart-outline" size={15} color="black" />
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 10, color: '#000' }}>Add to Cart</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 2 }}>
-                    <Pressable style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity activeOpacity={.5} style={{ flexDirection: 'row' }}>
                         <MaterialCommunityIcons name="shopping-outline" size={15} color="black" />
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 10, color: '#000' }}>Buy Now</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </View>
             {/* tabBar ends here...!!! */}

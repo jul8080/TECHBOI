@@ -3,8 +3,8 @@ import { View, Text } from "react-native";
 import { deviceWidth } from "../../utils/Dimensions";
 import { useContextApi } from "../../Helper/Index";
 
-function PaymentMethod({value, marginTop, select}) {
-    const { state, bagTotal } = useContextApi()
+function PaymentMethod({value, marginTop}) {
+    const { state, bagTotal, select } = useContextApi()
     return (
         <View style={{ width: deviceWidth - value, backgroundColor: '#fff', alignSelf: 'center', paddingHorizontal: 16, paddingVertical: 15, marginTop: marginTop }} >
             <View style={{ borderBottomWidth: 2, borderStyle: 'dashed', borderColor: '#EDF1F4', paddingBottom: 12 }} >

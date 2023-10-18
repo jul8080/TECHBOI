@@ -76,23 +76,18 @@ export default function TransitScreen() {
                                 onViewableItemsChanged={onViewCallBack}
                                 viewabilityConfig={viewConfigRef}
                                 removeClippedSubviews={true}
+                                initialNumToRender={4}
+                                estimatedItemSize={200}
                                 numColumns={2}
                                 data={products}
                                 keyExtractor={(_, index) => index.toString()}
-                                renderItem={({ item }) => <YouMayAlsoLike item={item} />}
+                                renderItem={_renderItem}
                             />
                         </View>
-
-                        // <ScrollView bounces={false} showsVerticalScrollIndicator={false} >
-                        //     <View style={{ paddingTop: 0, backgroundColor: '#f1f1f1', width: deviceWidth, rowGap: 3, flexDirection: 'row', gap: 15, flexWrap: 'wrap', alignItems: 'center', paddingLeft: 14 }}>
-                        //         {products.map((item, index) => <YouMayAlsoLike item={item} key={index} />)}
-
-                        //     </View>
-                        // </ScrollView>
-
                     )}
             </View>
             {/* All items ends here... */}
         </View>
     )
 }
+const _renderItem = ({item}) => <YouMayAlsoLike item={item} />

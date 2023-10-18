@@ -59,10 +59,10 @@ export default function FormModal(props) {
                     <View style={{ height: 70 - 20, width: deviceWidth, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', paddingBottom: 8, paddingHorizontal: 32 }}>
                         <Feather name="arrow-left-circle" size={24} color="black" onPress={hideForm} />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity activeOpacity={.9} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ textTransform: 'capitalize', fontSize: 15, fontFamily: 'Poppins-Medium', color: '#000' }}>{stateAddress.statusForm ? 'Edit Delivery Address' : 'Add Delivery Address'}</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> 
                     </View>
                     {/* header ends here... */}
                     <ScrollView showsVerticalScrollIndicator={false} >

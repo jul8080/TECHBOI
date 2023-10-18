@@ -1,6 +1,6 @@
 import React, { } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, FlatList, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { deviceWidth } from '../utils/Dimensions'
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +11,7 @@ import { useStatusBar, useContextApi } from "../Helper/Index";
 import CartItems from "../components/cart/CartItems";
 
 const CartScreen = ({ navigation }) => {
-    const { statusStyle, shopLogoBackground } = useStatusBar()
+    const { statusStyle, shopLogoBackground, onViewCallBack, viewConfigRef } = useStatusBar()
     const { state, setShowPaymentConfirmation } = useContextApi()
 
 
@@ -37,16 +37,17 @@ const CartScreen = ({ navigation }) => {
                 </View>
             ) : (
                 <View style={{ backgroundColor: '#fff', width: deviceWidth, height: 225, marginTop: 8, alignItems: 'center', paddingVertical: 14 }}>
-                    <ScrollView
-                        scrollEventThrottle={16} showsVerticalScrollIndicator={false}
-                    >
-                        <View style={{ rowGap: 5 }}>
-                            {/* items 1 starts here... */}
-                            {state.cart.map((item, index) => <CartItems key={index} item={item} />)}
-
-                            {/* items 1 ends here... */}
-                        </View>
-                    </ScrollView>
+                    <FlatList
+                        onViewableItemsChanged={onViewCallBack}
+                        viewabilityConfig={viewConfigRef}
+                        removeClippedSubviews={true}
+                        initialNumToRender={4}
+                        estimatedItemSize={200}
+                        showsVerticalScrollIndicator={false}
+                        data={state.cart}
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item }) => <CartItems item={item} />}
+                    />
                 </View>
             )}
 
@@ -58,12 +59,13 @@ const CartScreen = ({ navigation }) => {
 
             {/* Checkout button starts here... */}
             <View style={{ height: 158, width: deviceWidth - 35, marginBottom: 0, alignSelf: 'center' }}>
-                <Pressable
+                <TouchableOpacity
+                    activeOpacity={.7}
                     // onPress={slideRight}
                     onPress={() => setShowPaymentConfirmation(true)}
                     style={{ backgroundColor: '#425466', height: 38, width: 98, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginTop: 43 }}>
                     <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 13, color: '#fff' }} >Checkout</Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
             {/* Checkout button ends here... */}
 

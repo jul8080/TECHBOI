@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useReducer, useCallback, useRef } from "react";
+import React, { useState, useEffect, useContext, useReducer, useCallback, useRef, useMemo } from "react";
 import { cartReducer, initialState } from "./reducer/CartReducer";
 import { addressReducer, initialStateAddress } from "./reducer/AddressReducer";
 
@@ -20,19 +20,21 @@ const useStatusBar = () => {
 
 
 function Provider({ children }) {
-    const onViewCallBack = useCallback((viewableItems)=> {
+    const onViewCallBack = useCallback((viewableItems) => {
         console.log(viewableItems)
         // Use viewable items in state or as intended
     }, []) // any dependencies that require the function to be "redeclared"
-  
+
     const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 }).current
     // useReducer for cart here...
     const [state, dispatch] = useReducer(cartReducer, initialState)
+
     const bagTotal = () => {
         const total = state.cart.reduce((total, item) => (total += item.quantity * item.price), 0);
         state.totalAmount = total === 0 ? 0 : total + state.chargeFee;
         return total;
     };
+
     // useReducer for address here...
     const [stateAddress, dispatchAddress] = useReducer(addressReducer, initialStateAddress)
     const selectedAddress = stateAddress.address.filter(status => status.completed === true)
@@ -57,6 +59,7 @@ function Provider({ children }) {
     const [showCountryModal, setShowCountryModal] = useState(false)
     const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false)
     const [showHelpCenter, setShowHelpCenter] = useState(false)
+    const [select, setSelect] = useState("")
     // useStates ends here...
 
     // categories starts here...
@@ -123,7 +126,8 @@ function Provider({ children }) {
                 setRegion,
                 setZcode,
                 setCountry,
-
+                select,
+                setSelect,
                 products,
                 loading,
                 state,
@@ -135,7 +139,7 @@ function Provider({ children }) {
                 popupMessage,
                 setPopupMessage
             }}>
-            <statusBarContext.Provider value={{ statusStyle, shopLogoBackground, onViewCallBack,  viewConfigRef}}>
+            <statusBarContext.Provider value={{ statusStyle, shopLogoBackground, onViewCallBack, viewConfigRef }}>
                 <categoryContext.Provider value={{
                     processors,
                     motherboards,
@@ -149,7 +153,7 @@ function Provider({ children }) {
                     fullSets,
                     headphones
                 }}>
-                        {children}
+                    {children}
                 </categoryContext.Provider>
             </statusBarContext.Provider>
         </contextApi.Provider>

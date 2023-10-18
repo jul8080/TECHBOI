@@ -104,7 +104,7 @@ const OrderScreen = () => {
                                             <View style={{ backgroundColor: '#f1f1f1', paddingHorizontal: 10 }}>
                                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: '#9B9B9B' }}>You May Also Like</Text>
                                             </View>
-                                            <View style={{ width: '100%', height: 2, backgroundColor: '#d5d5d5', position: 'absolute', zIndex: -1 }} />
+                                            <View style={{ width: '100%', height: 1, backgroundColor: '#d5d5d5', position: 'absolute', zIndex: -1 }} />
                                         </View>
                                     )}
                                     <View style={{ paddingTop: 10, backgroundColor: '#f1f1f1', width: deviceWidth, marginBottom: 45, alignItems: 'center' }}>
@@ -112,12 +112,13 @@ const OrderScreen = () => {
                                             showsVerticalScrollIndicator={false}
                                             onViewableItemsChanged={onViewCallBack}
                                             viewabilityConfig={viewConfigRef}
+                                            initialNumToRender={4}
                                             estimatedItemSize={200}
                                             removeClippedSubviews={true}
                                             data={products}
                                             numColumns={2}
                                             keyExtractor={(_, index) => index.toString()}
-                                            renderItem={({ item }) => <AllItems item={item} />}
+                                            renderItem={_renderItem}
                                         />
                                     </View>
                                 </View>
@@ -133,5 +134,5 @@ const OrderScreen = () => {
         </View>
     )
 }
-
+const _renderItem = ({item}) => <AllItems item={item} />
 export default OrderScreen

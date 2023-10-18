@@ -23,7 +23,7 @@ export default function DeliveryAddress(props) {
         setCountry,
     } = useContextApi()
     const { visible, hideModal } = props
-    const { statusStyle, shopLogoBackground } = useStatusBar
+    const { statusStyle, shopLogoBackground, onViewCallBack,viewConfigRef } = useStatusBar
     const [visibleForm, setVisibleForm] = useState(false)
     const showForm = () => setVisibleForm(true)
     const hideForm = () => {
@@ -65,7 +65,7 @@ export default function DeliveryAddress(props) {
                 <View style={{ height: 70 - 20, width: deviceWidth, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', paddingBottom: 8, paddingHorizontal: 32 }}>
                     <Feather name="arrow-left-circle" size={24} color="black" onPress={hideModal} />
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={showForm} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={.5} onPress={showForm} style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Entypo name="plus" size={18} color="black" />
                             <Text style={{ textTransform: 'uppercase', fontSize: 15, fontFamily: 'Poppins-Medium', color: '#000' }}>add new</Text>
                         </TouchableOpacity>
@@ -75,6 +75,11 @@ export default function DeliveryAddress(props) {
                 <View style={{ width: deviceWidth, backgroundColor: 'transparent', flex: 1, marginTop: 15 }}>
                     {/* list of address starts here... */}
                     <FlatList
+                        onViewableItemsChanged={onViewCallBack}
+                        viewabilityConfig={viewConfigRef}
+                        removeClippedSubviews={true}
+                        initialNumToRender={4}
+                        estimatedItemSize={200}
                         data={stateAddress.address}
                         keyExtractor={(_, index) => index.toString()}
                         renderItem={({ item: person, index }) => (
@@ -101,7 +106,7 @@ export default function DeliveryAddress(props) {
                                 <View style={{ flexDirection: 'row', columnGap: 10 }}>
                                     <Checkbox
                                         value={person.completed}
-                                        onValueChange={() => dispatchAddress({type: ACTIONS.TOGGLE_COMPLETED, payload: index})}
+                                        onValueChange={() => dispatchAddress({ type: ACTIONS.TOGGLE_COMPLETED, payload: index })}
                                         style={{ height: 15, width: 15 }}
                                         color={'#000000'}
                                     />

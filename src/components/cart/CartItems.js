@@ -6,9 +6,12 @@ import { AntDesign } from '@expo/vector-icons';
 import { getImage } from "../../utils/ProductImage";
 import { ACTIONS } from "../../Helper/reducer/actions/CartActions";
 function CartItems({ item }) {
+
     const { dispatch } = useContextApi()
+
+   
     return (
-        <View style={{ width: deviceWidth - 20, backgroundColor: '#f1f1f1', flexDirection: 'row', padding: 8, borderRadius: 10 }}>
+        <View style={{ width: deviceWidth - 20, backgroundColor: '#f1f1f1', flexDirection: 'row', padding: 8, borderRadius: 10, margin: 3 }}>
 
             <View style={{ height: '100%', width: 86 }}>
                 <Image source={getImage(item.image)} style={{ flex: 1, width: null, height: null, resizeMode: 'cover' }} />
