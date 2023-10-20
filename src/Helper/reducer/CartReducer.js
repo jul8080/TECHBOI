@@ -5,6 +5,7 @@ const initialState = {
     bagTotal: 0,
     totalAmount: 0,
     chargeFee: 0,
+    limit: ''
 };
 
 function cartReducer(state, action) {
@@ -12,6 +13,12 @@ function cartReducer(state, action) {
         case ACTIONS.ADD_TO_CART: {
             const checkIndex = state.cart.findIndex((item) => item.id === action.payload.id);
             if (checkIndex === -1) {
+                if(state.cart.length >= 2) {
+                    return {
+                        ...state,
+                        limit: "only 10 items can put inside the cart."
+                    }
+                }
                 return {
                     ...state,
                     cart: [...state.cart, { ...action.payload, quantity: 1 }]
