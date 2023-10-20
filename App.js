@@ -43,7 +43,9 @@ export default function App() {
     </Provider>
   );
 }
-// json-server --host 0.0.0.0 ./data/db.json
-
+// run: npm start
+// first run: ipconfig copy IPv4 Address. . . . . . . . . . . : 192.168.0.25 and pase it to chrome before running the code below
+// run: json-server --host 0.0.0.0 ./data/db.json
+// complete setup linke here for fetching the api: http://192.168.0.25:3000/
 // git config --global core.autocrlf false
 // ...StyleSheet.absoluteFillObject -> perfectly centered the object
